@@ -39,8 +39,8 @@ This repository documents the architecture and validation procedures for a centr
 8. Toggle on the Password Writeback setting inside the Optional Features dashboard view.
 9. Finish the engine configuration window to fire the baseline replication loop.
 
-> <img width="1315" height="924" alt="image" src="https://github.com/user-attachments/assets/57af41f2-d1af-4e6c-8066-54cbd34c6260" />
-**
+> <img width="1313" height="924" alt="image" src="https://github.com/user-attachments/assets/c69498f2-4428-4ea1-bd37-d8cfc1aefd8b" />
+
 
 ### 3. Engineering Challenge & Troubleshooting Logs
 * **The Failure:** The synchronization service manager flagged an `AttributeValueMustBeUnique` validation fault. Replication froze across the gateway directory stream due to a legacy cloud-only user record sharing Creed's mail attribute string.
