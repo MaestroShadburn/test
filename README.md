@@ -1,128 +1,166 @@
-# Dunder Mifflin Enterprise Identity & Security Lab Suite
+# Dunder Mifflin Enterprise Identity Suite
 
-This repository documents the technical design, deployment configuration, and validation procedures for a centralized enterprise identity infrastructure built within a standalone Microsoft Entra ID tenant. The environment mirrors a distributed branch-network scenario for Dunder Mifflin Paper Company, addressing legacy synchronization vulnerabilities, zero-trust perimeter access controls, and automated privilege governance lifecycles.
+This repository documents the architecture and validation procedures for a centralized enterprise identity infrastructure built within a standalone Microsoft Entra ID tenant. The environment mirrors a distributed branch-network scenario for Dunder Mifflin Paper Company.
 
 ---
 
-## LAB 1: Hybrid Directory Architecture & Core Synchronization Lifecycle
+## 🛠️ Infrastructure Labs
 
-### 1. Scenario & Business Objective
-Management has initiated a cloud-first infrastructure modernization mandate to migrate distributed branch resources into the Microsoft Entra cloud. However, the existing directory control plane relies on a legacy, on-premises directory infrastructure that houses active user profiles, organizational units (OUs), and regional security policies. 
+<details>
+<summary><b>LAB 1: Hybrid Directory Architecture & Core Synchronization Lifecycle</b></summary>
 
-Compounding this, erratic end-user behavior—specifically exemplified by employee Creed Bratton arbitrarily modifying his local system passwords outside of standard IT visibility—creates a fractured identity boundary. The technical objective is to engineer a secure hybrid directory bridge that establishes automated password hash replication and identity provisioning from the on-premises environment to Microsoft Entra ID without exposing local domain assets to external entry vectors.
+### 1. Scenario Context
+* On-premises legacy domain metadata stores active profiles, organizational units, and branch policies.
+* User Creed Bratton arbitrarily modifies system credentials out-of-band, fracturing directory alignment.
+* Engineering Objective: Connect local identities securely to Microsoft Entra ID via automated sync engines.
 
-### 2. Detailed Implementation Walkthrough
+### 2. Implementation Walkthrough
 
-#### Phase 1: On-Premises Active Directory Staging
-* **Operating System Isolation:** Provisioned a virtual machine running Windows Server 2022 Standard Edition to act as the primary domain controller (DC) for the local branch.
-* **Directory Initialization:** Configured Active Directory Domain Services (AD DS) via Server Manager. Promoted the server to a domain controller in a new forest, defining the internal root domain namespace as `dunmifflin.local`.
-* **Domain Routing Alignment:** Navigated to Active Directory Domains and Trusts. Added the public, verified domain routing suffix `dunmifflin.org` as an available User Principal Name (UPN) suffix to ensure cloud-routing compatibility.
-* **Organizational Structure Provisioning:** Opened Active Directory Users and Computers (ADUC). Structured a dedicated Organizational Unit labeled `OU=Scranton-Branch,DC=dunmifflin,DC=local`. Inside this container, provisioned the targeted employee objects, explicitly modifying Creed Bratton's account to utilize the `cbratton@dunmifflin.org` UPN mapping.
+#### Phase 1: Local Server Provisioning
+1. Deploy an isolated virtual machine running Windows Server 2022 Standard.
+2. Initialize Active Directory Domain Services (AD DS) through Server Manager.
+3. Establish a new forest root domain designated as `dunmifflin.local`.
+4. Open Active Directory Domains and Trusts to append the `dunmifflin.org` UPN suffix.
+5. Launch Active Directory Users and Computers (ADUC) to build `OU=Scranton-Branch`.
+6. Provision target employee accounts inside the new container.
+7. Map Creed Bratton's account to the routing identity `cbratton@dunmifflin.org`.
 
-> **[INSERT SCREENSHOT 1.1: ACTIVE DIRECTORY USERS AND COMPUTERS SHOWING SCRANTON-BRANCH OU AND USER OBJECTS]**
+> **[INSERT SCREENSHOT 1.1: ADUC SHOWING THE SCRANTON-BRANCH OU AND PROVISIONED USER OBJECTS]**
 
-#### Phase 2: Microsoft Entra Connect Architecture & Deployment
-* **Sync Engine Initialization:** Downloaded and launched the Microsoft Entra Connect configuration wizard on the local domain controller. Selected the Custom Installation path to maintain granular control over object scoping.
-* **Tenant Credential Mapping:** Authenticated to the cloud environment using dedicated Hybrid Identity Administrator credentials. Connected the local directory by inputting the `dunmifflin.local` enterprise administrator credentials.
-* **Directory Scoping and Filtering:** Navigated to the Domain and OU Filtering screen. Modified the default scoping from synchronization of the entire domain to sync only the explicit `OU=Scranton-Branch` container. This prevents default built-in service accounts from polluting the cloud directory space.
-* **Credential Replication Tuning:** Selected Password Hash Synchronization (PHS) as the primary sign-in method. Enabled Password Writeback to allow cloud-initiated password modifications to securely replicate back down to the local server room, resolving the local configuration vulnerability.
+#### Phase 2: Synchronization Topology Configuration
+1. Initialize the Microsoft Entra Connect configuration assistant on the Domain Controller.
+2. Select the Custom Installation wizard path to control configuration scaling rules.
+3. Authenticate with the tenant utilizing dedicated Hybrid Identity Administrator credentials.
+4. Input local administrative parameters to bind the `dunmifflin.local` forest profile.
+5. Access the Domain and OU Filtering window to uncheck the entire directory tree.
+6. Check only the explicit box tracking the `OU=Scranton-Branch` container layer.
+7. Choose Password Hash Synchronization (PHS) as the underlying sign-in structure.
+8. Toggle on the Password Writeback setting inside the Optional Features dashboard view.
+9. Finish the engine configuration window to fire the baseline replication loop.
 
-> **[INSERT SCREENSHOT 1.2: MICROSOFT ENTRA CONNECT CONFIGURATION SCREEN SHOWING OU FILTERING EXCLUSIVELY SCOPED TO THE SCRANTON-BRANCH]**
+> **[INSERT SCREENSHOT 1.2: ENTRA CONNECT SETTINGS SHOWING DIRECTORY FILTRATION FOR THE SCRANTON BRANCH ONLY]**
 
-### 3. Engineering Challenge & Resolution Strategy
-* **The Vulnerability/Error:** During the initial execution of the delta synchronization cycle, replication stalled entirely. The Microsoft Entra Connect Synchronization Service manager flagged a critical loop failure labeled `AttributeValueMustBeUnique` alongside an ongoing `DirSync` replication freeze. Tracing the event metadata revealed that a legacy cloud-only test account for Creed Bratton shared an identical mail attribute with the incoming on-premises user object, causing an immutable identity conflict at the cloud gateway.
-* **The Resolution:** To remediate the sync failure without destroying directory integrity, the hardcoded cloud conflict had to be resolved. Connected to the tenant via the Microsoft Graph PowerShell SDK using the `User.ReadWrite.All` permission scope. Executed a command to locate the conflicting cloud-only object GUID and purged it completely using `Remove-MgUser -UserId [Object-ID]`. Back on the local domain controller, forced an immediate, full directory sync cycle via PowerShell:
-  `Start-ADSyncSyncCycle -PolicyType Initial`
-  The replication engine cleared instantly, cleanly mapping the local on-premises identity to a synchronized cloud object.
+### 3. Engineering Challenge & Troubleshooting Logs
+* **The Failure:** The synchronization service manager flagged an `AttributeValueMustBeUnique` validation fault. Replication froze across the gateway directory stream due to a legacy cloud-only user record sharing Creed's mail attribute string.
+* **The Fix:** Cleaned the stale object out of the cloud directory using the command-line interface.
 
-### 4. Technical Validation Logs
-To confirm the integrity of the hybrid identity bridge, navigate to the Entra admin portal and inspect the operational health metrics:
-* Expand Identity ➔ Users ➔ All Users.
-* Verify the user table contains the synchronized object profiles.
-* Audit the **On-premises sync enabled** attribute column; it must explicitly display a status value of **Yes** with a source indicator matching the Microsoft Entra Connect sync engine.
+```powershell
+Connect-MgGraph -Scopes "User.ReadWrite.All"
+Get-MgUser -Filter "UserPrincipalName eq 'cbratton@dunmifflin.org'" | Select-Object Id
+Remove-MgUser -UserId "[Target-Object-GUID]"
+```
 
-> **[INSERT SCREENSHOT 1.3: ENTRA PORTAL ALL USERS DASHBOARD SHOWING SYNCHRONIZED USER OBJECTS MARKED WITH ON-PREMISES SYNC ENABLED AS YES]**
+* **The Result:** Re-triggered a manual initialization replication loop from the server room terminal screen.
+
+```powershell
+Start-ADSyncSyncCycle -PolicyType Initial
+```
+
+### 4. Verification Benchmarks
+1. Access the Microsoft Entra cloud directory interface under Identity ➔ Users.
+2. Filter the user listing table to display the synchronized branch accounts.
+3. Confirm the **On-premises sync enabled** dashboard column flags a value of **Yes**.
+
+> **[INSERT SCREENSHOT 1.3: CLOUD USER MATRIX VERIFYING SYNCHRONIZED ACCOUNTS ARE ACTIVE]**
+
+</details>
+
 ---
 
-## LAB 2: Zero-Trust Conditional Access & Sign-In Risk Policies
+<details open>
+<summary><b>LAB 2: Zero-Trust Conditional Access & Sign-In Risk Policies</b></summary>
 
-### 1. Scenario & Business Objective
-Sales representative Jim Halpert is executing an out-of-state travel itinerary to Philadelphia to negotiate a high-revenue paper procurement contract with an international account. Concurrently, regional management—driven by Dwight Schrute's highly critical risk assessments—is deeply concerned that an external adversarial entity (specifically classified as the Scranton Strangler) will attempt an identity impersonation exploit to breach the corporate network and compromise proprietary sales leads. 
+### 1. Scenario Context
+* Sales rep Jim Halpert travels out-of-state to Philadelphia to execute high-value contracts.
+* Security risks elevate due to management paranoia regarding threat actors stealing sales leads.
+* Engineering Objective: Build an identity perimeter to intercept malicious connections from unverified networks.
 
-The engineering objective is to architect and push live a Zero-Trust Conditional Access policy that dynamically monitors identity authentication behavior and intercepts unauthorized, high-risk connection attempts from untrusted proxy architectures without degrading standard user workflows.
+### 2. Implementation Walkthrough
 
-### 2. Detailed Implementation Walkthrough
+#### Phase 1: Policy Scope Setup
+1. Launch the Entra portal panel using Security Administrator permissions.
+2. Open the left-side navigation blade and head to Protection ➔ Conditional Access.
+3. Click the Create New Policy link button to open the rule authoring workspace.
+4. Set the policy system name parameters to `DM-CA02: Sign-In Risk Enforcement Perimeter`.
+5. Select Users ➔ check Select users and groups ➔ search and assign Jim Halpert's identity object.
+6. Open Target resources ➔ choose Cloud apps ➔ flip the application dropdown to All cloud apps.
 
-#### Phase 1: Policy Scope Targeting
-* **Perimeter Engine Initialization:** Logged into the Microsoft Entra admin center using Security Administrator privileges. Expanded the Protection menu and navigated to Conditional Access ➔ Policies. Initialized a new policy rule labeled `DM-CA02: Edge Access - Sign-In Risk Enforcement Perimeter`.
-* **Identity Object Assignment:** Clicked on Users ➔ Select users and groups. Searched the integrated cloud directory specifically for Jim Halpert's identity account and added it to the mandatory enforcement group.
-* **Resource Boundary Mapping:** Selected Target resources ➔ Cloud apps. Swapped the selector to All cloud apps. This configuration builds an explicit security canopy over the entire office application matrix, including corporate mailboxes, file shares, and customer lead databases.
+> **[INSERT SCREENSHOT 2.1: CONDITIONAL ACCESS INTERFACE FOCUSING TARGETING SCAPE ON JIM HALPERT]**
 
-> **[INSERT SCREENSHOT 2.1: CONDITIONAL ACCESS CONFIGURATION SHOWING USER ASSIGNMENTS SCOPED EXCLUSIVELY TO JIM HALPERT]**
+#### Phase 2: Threat Detection & Access Controls
+1. Click the Conditions sidebar window and select the Sign-in risk selection block.
+2. Flip the configuration option toggle switch state over from No to Yes.
+3. Check the specific risk level assessment checkboxes tracking High and Medium threat profiles.
+4. Scroll down the panel structure view to open the Access controls ➔ Grant menu block.
+5. Click Grant access to reveal enforcement rules and check **Require multi-factor authentication**.
+6. Switch the Enable policy toggle control location at the footer from Report-only to **On**.
+7. Select Create to compile the policy rules across global network data centers.
 
-#### Phase 2: Risk Engine & Access Control Gateways
-* **Sign-In Risk Factor Activation:** Expanded the Conditions menu and selected Sign-in risk. Toggled the configuration switch to Yes. Under the risk level selection matrix, checked the checkboxes for High and Medium. This instructs the cloud's real-time machine learning engines to evaluate the behavioral metadata of every single authentication request. If the login attempts exhibit indicators of anonymous proxy routing, impossible travel velocities, or unmapped IP subnets, the session profile risk score is elevated instantly.
-* **Enforcement Matrix Mapping:** Scrolled down to the Access controls workspace and selected Grant. Modified the logic parameters from passive tracking to active blocking. Checked the rule for Grant Access but appended a strict conditional dependency requirement: **Require multi-factor authentication**.
-* **Global Tenant Activation:** Toggled the Enable policy switch at the base of the portal from Report-only straight to **On**. Clicked Create to push the policy configuration out to Microsoft's global edge infrastructure.
+> **[INSERT SCREENSHOT 2.2: CONDITIONS INTERFACE MAP CONFIGURING HIGH AND MEDIUM SIGN-IN RISK ASSIGNMENTS]**
 
-> **[INSERT SCREENSHOT 2.2: CONDITIONS CONFIGURATION WINDOW WITH SIGN-IN RISK LEVELS SET TO HIGH AND MEDIUM]**
+### 3. Engineering Challenge & Troubleshooting Logs
+* **The Failure:** Ran an exploitation simulation via a Tor browser node using Jim's login parameters. The connection bypassed security checks because the policy rule targeted *User Risk* (compromised credentials) instead of *Sign-In Risk* (connection mechanics anomalies).
+* **The Fix:** Opened the policy configuration console workspace. Disabled the User Risk tracking rule parameters and toggled on the Sign-in risk conditions configuration switch instead.
 
-### 3. Engineering Challenge & Resolution Strategy
-* **The Vulnerability/Error:** During initial penetration testing of the perimeter, I launched an anonymous Tor browser session on a test device to mimic adversarial traffic routing. Upon attempting a login as Jim Halpert, the authentication session went straight through to the dashboard without triggering any security challenges. Reviewing the developer portal configuration revealed a massive structural flaw: the policy had been accidentally scoped under the *User Risk* condition rather than the *Sign-In Risk* engine. Because Jim's core password data had not been actively leaked onto the dark web, the User Risk score remained clean, allowing the malicious anonymous connection straight past our gates.
-* **The Resolution:** To remediate this gaping security hole, I opened the Conditional Access policy settings pane. Navigated back into Conditions, turned User Risk to No, and explicitly activated the Sign-in risk policy block. This ensured that the rule focused strictly on the behavioral mechanics of the connection stream (the unverified anonymous proxy network) rather than the static state of the password object itself, immediately aligning the cloud's response with our real-world attacker model.
+### 4. Verification Benchmarks
 
-### 4. Technical Validation Logs
+#### Active Exploitation Run
+1. Launch an isolated anonymous Tor window instance to act as the adversarial threat vector.
+2. Navigate to `://office.com` and type in Jim Halpert's corporate email credentials.
+3. Observe the cloud identity suite immediately evaluate the anonymous routing layer traffic.
+4. Verify the player screen freezes authentication and pops a mandatory MFA roadblock challenge.
 
-#### The Live Exploitation Simulation Test
-To validate the active enforcement capabilities of the security perimeter, open an isolated, anonymous browser instance (such as a Tor browser node or an unmapped proxy connection) to simulate an outside threat vector. Navigate to the cloud user login page (`://office.com`) and input Jim Halpert's corporate email credentials. 
+> **[INSERT SCREENSHOT 2.3: ATTEMPTS VIA PROXY BLOCKED BY CONDITIONAL ACCESS CHALLENGES]**
 
-The authentication engine instantly intercepts the incoming network metadata, evaluates the connection profile as an untrusted high-risk anomaly, and halts the login session entirely, throwing up an absolute Multi-Factor Authentication enforcement wall on the monitor.
+#### Security Audit Trail
+1. Return to the primary admin console browser window viewing the monitoring directory tree.
+2. Navigate to Identity ➔ Monitoring & health ➔ Sign-in logs.
+3. Drill down into the specific failed authentication session row logging Jim's account ID.
+4. View the Conditional Access detail blade panel view to verify the policy row details.
+5. Confirm the system applied a green **Success** evaluation status rule confirmation stamp.
 
-> **[INSERT SCREENSHOT 2.3: LIVE SIMULATION VIEW SHOWING THE SIGN-IN ATTEMPT REJECTED AND INTERCEPTED BY AN MFA ROADBLOCK]**
+> **[INSERT SCREENSHOT 2.4: SYSTEM SIGN-IN LOG ANALYSIS TRACKING THE INTERCEPTED THREAT LOG]**
 
-#### The Post-Mortem Audit Verification
-To gather definitive, data-backed proof that the policy successfully applied and executed at the gateway, navigate back to the primary administrator browser session:
-* Go to Identity ➔ Monitoring & health ➔ Sign-in logs.
-* Locate the specific, failed authentication log row for Jim Halpert originating from the anonymous IP address block.
-* Click the log entry to open the right-side detail blade and select the **Conditional Access** tab.
-* Locate the policy line item `DM-CA02: Edge Access - Sign-In Risk Enforcement Perimeter`. The Result column must display a definitive, green **Success** status stamp, proving the identity engine correctly calculated the threat risk score and intercepted the exploit attempt.
+</details>
 
-> **[INSERT SCREENSHOT 2.4: ENTRA SIGN-IN LOGS DETAIL BLADE PROVING THE CONDITIONAL ACCESS POLICY SUCCESSFULLY APPLIED A GREEN SUCCESS STAMP]**
 ---
 
-## LAB 3: Privileged Identity Governance & Just-In-Time Lifecycle
+<details>
+<summary><b>LAB 3: Privileged Identity Governance & Just-In-Time Lifecycle</b></summary>
 
-### 1. Scenario & Business Objective
-The regional director is executing an extended off-site corporate leave, triggering a complete management power vacuum inside the local branch. Seizing this opportunity, staff member Dwight Schrute has formally demanded permanent Global Administrator directory privileges to execute high-level IT adjustments as the Assistant Regional Manager. 
+### 1. Scenario Context
+* Executive absence leaves a branch network leadership space wide open for exploitation.
+* User Dwight Schrute demands permanent root Global Administrator visibility to run the network layer.
+* High permissions introduce privilege vulnerabilities and insider-threat risk vectors.
+* Engineering Objective: Configure a lifecycle perimeter providing temporary, auditable privilege elevations.
 
-Granting permanent, unrestricted root administrative rights to an active end-user account violently breaches the core security principle of Least Privilege and introduces severe configuration drift and inside-threat vulnerabilities to the enterprise tenant. The engineering objective is to deploy an enterprise-grade identity governance perimeter that provisions temporary, highly auditable administrative access that automatically revokes itself after a strict operational lifetime window.
+### 2. Implementation Walkthrough
 
-### 2. Detailed Implementation Walkthrough
+#### Phase 1: Governance Structure Setup
+1. Log into the administrative console and track to Privileged Identity Management (PIM).
+2. Expand the Manage menu layout items to open Azure AD roles ➔ Roles.
+3. Locate Global Administrator to review the existing system assignment list view.
+4. Click Add assignments to link a new identity token tracking policy.
+5. Select members ➔ search for Dwight Schrute's account ➔ link the target profile object.
+6. Swap Assignment type configurations from static Active parameters down to **Eligible**.
 
-#### Phase 1: Privileged Identity Management Governance Staging
-* **Governance Layer Activation:** Logged into the administrative tenant and navigated to Microsoft Entra Privileged Identity Management (PIM). Expanded the Manage menu and selected Azure AD roles ➔ Roles.
-* **Role Vulnerability Remediation:** Searched the directory role database for Global Administrator. Inspected the existing assignment matrix to ensure Dwight Schrute's account possessed zero permanent, active administrative footprints. 
-* **Eligible Status Provisioning:** Clicked Add assignments. Set the role target to Global Administrator. Clicked Select members, searched for Dwight Schrute, and mapped his profile. Under the Setting type configuration panel, changed the Assignment type dropdown from Active straight to **Eligible**. This ensures his default security state remains a low-privilege standard user account until he executes a formal escalation request.
+> **[INSERT SCREENSHOT 3.1: PIM PERMISSIONS DIRECTORY TREE SHOWING DWIGHT ASSIGNED TO THE ELIGIBLE MATRIX]**
 
-> **[INSERT SCREENSHOT 3.1: PIM ROLES INTERFACE SHOWING DWIGHT SCHRUTE PROVISIONED EXCLUSIVELY AS AN ELIGIBLE GLOBAL ADMINISTRATOR]**
+#### Phase 2: Role Lifecycle Hardening
+1. Click the Global Administrator settings gear icon link inside the PIM control space.
+2. Select Edit to modify baseline role assignment activation parameters.
+3. Pull the Maximum activation duration slider down to lock role elevation at **2 hours**.
+4. Check the activation criteria requirement box forcing Multi-Factor Authentication.
+5. Check the rule tracking option for **Require justification on activation**.
+6. Hit the Save button choice at the bottom edge to write changes across the infrastructure.
 
-#### Phase 2: Lifecycle & Just-In-Time Policy Hardening
-* **Activation Guardrails Configuration:** Selected the Global Administrator role settings menu and clicked Edit to rewrite the activation governance rules.
-* **Temporal Window Restriction:** Modified the Maximum activation duration slider downward, locking it to a maximum threshold of **2 hours**. 
-* **Mandatory Justification Enforcement:** Checked the checkbox requiring Multi-Factor Authentication on activation to verify identity truth. Checked the checkbox for **Require justification on activation**, forcing the end-user to type a detailed business-case statement into the system log before elevation is authorized.
+> **[INSERT SCREENSHOT 3.2: PIM CONTROL PANE SHOWING HOURLY LIFETIME RESTRICTIONS AND MANDATORY FIELDS]**
 
-> **[INSERT SCREENSHOT 3.2: PIM ROLE SETTINGS PANEL SHOWING THE 2-HOUR MAX LIFETIME BOUNDARY AND MANDATORY JUSTIFICATION CONTROLS]**
+### 3. Engineering Challenge & Troubleshooting Logs
+* **The Failure:** Executed a role escalation test simulation using Dwight's user account. The platform verified the justification entry text but failed to trigger the automated timeout cleanup script, leaving root privileges active permanently.
+* **The Fix:** Conducted an administrative trace and discovered Dwight's profile was nested inside a legacy security group that inherited direct, permanent Global Admin permissions outside PIM visibility rules. Purged the account from that legacy security group container to clear the inheritance leak.
 
-### 3. Engineering Challenge & Resolution Strategy
-* **The Vulnerability/Error:** During validation testing, I logged into Dwight’s account and initiated the JIT role activation sequence. The system accepted the justification and successfully escalated his account permissions to Global Admin. However, upon auditing the system clock after 3 hours had elapsed, Dwight's profile remained permanently elevated as an Active Global Admin, failing the automatic revocation sweep and leaving the entire tenant completely exposed.
-* **The Resolution:** Ran a full administrative role tracking audit. Discovered that Dwight’s account had been previously nested inside a legacy IT Security AD security group that had been manually granted permanent, direct Global Administrator rights outside of PIM visibility. This static inheritance layer overrode the PIM dynamic engine rules. I navigated to Groups, purged Dwight’s account entirely from the legacy security group container, and re-synchronized the identity. Running a second activation test confirmed that the tenant now tightly monitors the 2-hour window and executes a clean, automated system sweep to strip away his root administrative privileges the exact second the timer hits zero.
-
-### 4. Technical Validation Logs
-To verify that the privileged access lifecycle is functioning under tight automated guardrails, navigate to the Entra PIM resource dashboard:
-* Open Privileged Identity Management ➔ Azure AD roles ➔ Audit history.
-* The logs must show a multi-stage lifecycle trail: 
-  1. An elevation request event capturing the user's explicit text business justification input.
-  2. A multi-factor verification pass logging successful identity truth validation.
-  3. A final automated system event log tracking the exact timestamp where the PIM background engine executed a clean, unassisted revocation to strip the administrative rights away, successfully locking Dwight back into a standard user security state.
-
-> **[INSERT SCREENSHOT 3.3: PIM AUDIT HISTORY LOG SHOWING THE AUTOMATED ACCESS ELEVATION AND SUBSEQUENT SYSTEM REVOCATION TIMESTAMP]**
+### 4. Verification Benchmarks
+1. Access the Privileged Identity Management console ➔ Azure AD roles ➔ Audit history.
+2. Review the timeline logs to track the chronological lifecycle events.
+3. Confirm the log records the entry text business case justification statement.
