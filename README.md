@@ -25,7 +25,8 @@ This repository documents the architecture and validation procedures for a centr
 6. Provision target employee accounts inside the new container.
 7. Map Creed Bratton's account to the routing identity `cbratton@dunmifflin.org`.
 
-> **[INSERT SCREENSHOT 1.1: ADUC SHOWING THE SCRANTON-BRANCH OU AND PROVISIONED USER OBJECTS]**
+> <img width="1920" height="984" alt="image" src="https://github.com/user-attachments/assets/7e9893bb-9b20-4dde-8a83-a82e129ee22d" />
+
 
 #### Phase 2: Synchronization Topology Configuration
 1. Initialize the Microsoft Entra Connect configuration assistant on the Domain Controller.
