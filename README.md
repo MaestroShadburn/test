@@ -27,7 +27,6 @@ This repository documents the architecture and validation procedures for a centr
 
 > <img width="1920" height="984" alt="image" src="https://github.com/user-attachments/assets/7e9893bb-9b20-4dde-8a83-a82e129ee22d" />
 
-
 #### Phase 2: Synchronization Topology Configuration
 1. Initialize the Microsoft Entra Connect configuration assistant on the Domain Controller.
 2. Select the Custom Installation wizard path to control configuration scaling rules.
@@ -40,7 +39,6 @@ This repository documents the architecture and validation procedures for a centr
 9. Finish the engine configuration window to fire the baseline replication loop.
 
 > <img width="1313" height="924" alt="image" src="https://github.com/user-attachments/assets/c69498f2-4428-4ea1-bd37-d8cfc1aefd8b" />
-
 
 ### 3. Engineering Challenge & Troubleshooting Logs
 * **The Failure:** The synchronization service manager flagged an `AttributeValueMustBeUnique` validation fault. Replication froze across the gateway directory stream due to a legacy cloud-only user record sharing Creed's mail attribute string.
@@ -64,7 +62,6 @@ Start-ADSyncSyncCycle -PolicyType Initial
 3. Confirm the **On-premises sync enabled** dashboard column flags a value of **Yes**.
 
 > <img width="611" height="401" alt="image" src="https://github.com/user-attachments/assets/c59a1089-c6b1-4809-ad99-2fcc2b89af66" />
-
 
 </details>
 
@@ -90,7 +87,6 @@ Start-ADSyncSyncCycle -PolicyType Initial
 
 > <img width="362" height="434" alt="image" src="https://github.com/user-attachments/assets/2a39f970-8947-4f60-b478-0b5c16419bc8" />
 
-
 #### Phase 2: Threat Detection & Access Controls
 1. Click the Conditions sidebar window and select the Sign-in risk selection block.
 2. Flip the configuration option toggle switch state over from No to Yes.
@@ -101,7 +97,6 @@ Start-ADSyncSyncCycle -PolicyType Initial
 7. Select Create to compile the policy rules across global network data centers.
 
 > <img width="950" height="423" alt="image" src="https://github.com/user-attachments/assets/664b11be-82e1-4115-b4a5-4a295fe7caf6" />
-
 
 ### 3. Engineering Challenge & Troubleshooting Logs
 * **The Failure:** Ran an exploitation simulation via a Tor browser node using Jim's login parameters. The connection bypassed security checks because the policy rule targeted *User Risk* (compromised credentials) instead of *Sign-In Risk* (connection mechanics anomalies).
@@ -117,7 +112,6 @@ Start-ADSyncSyncCycle -PolicyType Initial
 
 > <img width="557" height="373" alt="image" src="https://github.com/user-attachments/assets/b04eff28-aed2-4ecd-b2fa-18f49f42ca4e" />
 
-
 #### Security Audit Trail
 1. Return to the primary admin console browser window viewing the monitoring directory tree.
 2. Navigate to Identity ➔ Monitoring & health ➔ Sign-in logs.
@@ -126,7 +120,6 @@ Start-ADSyncSyncCycle -PolicyType Initial
 5. Confirm the system applied a green **Success** evaluation status rule confirmation stamp.
 
 > <img width="518" height="340" alt="image" src="https://github.com/user-attachments/assets/61d4752a-adb7-49e3-bfbf-1fd39b8bc627" />
-
 
 </details>
 
@@ -151,7 +144,7 @@ Start-ADSyncSyncCycle -PolicyType Initial
 5. Select members ➔ search for Dwight Schrute's account ➔ link the target profile object.
 6. Swap Assignment type configurations from static Active parameters down to **Eligible**.
 
-> **[INSERT SCREENSHOT 3.1: PIM PERMISSIONS DIRECTORY TREE SHOWING DWIGHT ASSIGNED TO THE ELIGIBLE MATRIX]**
+> <img width="336" height="415" alt="image" src="https://github.com/user-attachments/assets/4a2a7c06-e330-4130-836b-6b90a5c0e0f7" />
 
 #### Phase 2: Role Lifecycle Hardening
 1. Click the Global Administrator settings gear icon link inside the PIM control space.
@@ -161,7 +154,7 @@ Start-ADSyncSyncCycle -PolicyType Initial
 5. Check the rule tracking option for **Require justification on activation**.
 6. Hit the Save button choice at the bottom edge to write changes across the infrastructure.
 
-> **[INSERT SCREENSHOT 3.2: PIM CONTROL PANE SHOWING HOURLY LIFETIME RESTRICTIONS AND MANDATORY FIELDS]**
+> <img width="276" height="415" alt="image" src="https://github.com/user-attachments/assets/f845a057-2eea-4a0d-b1f4-0405c07fa941" />
 
 ### 3. Engineering Challenge & Troubleshooting Logs
 * **The Failure:** Executed a role escalation test simulation using Dwight's user account. The platform verified the justification entry text but failed to trigger the automated timeout cleanup script, leaving root privileges active permanently.
