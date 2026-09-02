@@ -63,7 +63,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 2. Filter the user listing table to display the synchronized branch accounts.
 3. Confirm the **On-premises sync enabled** dashboard column flags a value of **Yes**.
 
-> **[INSERT SCREENSHOT 1.3: CLOUD USER MATRIX VERIFYING SYNCHRONIZED ACCOUNTS ARE ACTIVE]**
+> <img width="611" height="401" alt="image" src="https://github.com/user-attachments/assets/c59a1089-c6b1-4809-ad99-2fcc2b89af66" />
+
 
 </details>
 
@@ -87,7 +88,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 5. Select Users ➔ check Select users and groups ➔ search and assign Jim Halpert's identity object.
 6. Open Target resources ➔ choose Cloud apps ➔ flip the application dropdown to All cloud apps.
 
-> **[INSERT SCREENSHOT 2.1: CONDITIONAL ACCESS INTERFACE FOCUSING TARGETING SCAPE ON JIM HALPERT]**
+> <img width="362" height="434" alt="image" src="https://github.com/user-attachments/assets/2a39f970-8947-4f60-b478-0b5c16419bc8" />
+
 
 #### Phase 2: Threat Detection & Access Controls
 1. Click the Conditions sidebar window and select the Sign-in risk selection block.
@@ -98,7 +100,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 6. Switch the Enable policy toggle control location at the footer from Report-only to **On**.
 7. Select Create to compile the policy rules across global network data centers.
 
-> **[INSERT SCREENSHOT 2.2: CONDITIONS INTERFACE MAP CONFIGURING HIGH AND MEDIUM SIGN-IN RISK ASSIGNMENTS]**
+> <img width="950" height="423" alt="image" src="https://github.com/user-attachments/assets/664b11be-82e1-4115-b4a5-4a295fe7caf6" />
+
 
 ### 3. Engineering Challenge & Troubleshooting Logs
 * **The Failure:** Ran an exploitation simulation via a Tor browser node using Jim's login parameters. The connection bypassed security checks because the policy rule targeted *User Risk* (compromised credentials) instead of *Sign-In Risk* (connection mechanics anomalies).
@@ -112,7 +115,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 3. Observe the cloud identity suite immediately evaluate the anonymous routing layer traffic.
 4. Verify the player screen freezes authentication and pops a mandatory MFA roadblock challenge.
 
-> **[INSERT SCREENSHOT 2.3: ATTEMPTS VIA PROXY BLOCKED BY CONDITIONAL ACCESS CHALLENGES]**
+> <img width="557" height="373" alt="image" src="https://github.com/user-attachments/assets/b04eff28-aed2-4ecd-b2fa-18f49f42ca4e" />
+
 
 #### Security Audit Trail
 1. Return to the primary admin console browser window viewing the monitoring directory tree.
@@ -121,7 +125,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 4. View the Conditional Access detail blade panel view to verify the policy row details.
 5. Confirm the system applied a green **Success** evaluation status rule confirmation stamp.
 
-> **[INSERT SCREENSHOT 2.4: SYSTEM SIGN-IN LOG ANALYSIS TRACKING THE INTERCEPTED THREAT LOG]**
+> <img width="518" height="340" alt="image" src="https://github.com/user-attachments/assets/61d4752a-adb7-49e3-bfbf-1fd39b8bc627" />
+
 
 </details>
 
