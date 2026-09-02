@@ -75,7 +75,7 @@ Start-ADSyncSyncCycle -PolicyType Initial
 
 ---
 
-<details open>
+<details>
 <summary><b>🛡️LAB 2: Zero-Trust Conditional Access & Sign-In Risk Policies</b></summary>
 
 ### 1. Scenario Context
