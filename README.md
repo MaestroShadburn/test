@@ -1,4 +1,4 @@
-# Dunder Mifflin Enterprise Identity Suite
+# 📄Dunder Mifflin Enterprise Identity Suite
 
 This repository documents the architecture and validation procedures for a centralized enterprise identity infrastructure built within a standalone Microsoft Entra ID tenant. The environment mirrors a distributed branch-network scenario for Dunder Mifflin Paper Company.
 
@@ -7,7 +7,7 @@ This repository documents the architecture and validation procedures for a centr
 ## 🛠️ Infrastructure Labs
 
 <details>
-<summary><b>LAB 1: Hybrid Directory Architecture & Core Synchronization Lifecycle</b></summary>
+<summary><b>⚙️LAB 1: Hybrid Directory Architecture & Core Synchronization Lifecycle</b></summary>
 
 ### 1. Scenario Context
 * On-premises legacy domain metadata stores active profiles, organizational units, and branch policies.
@@ -68,7 +68,7 @@ Start-ADSyncSyncCycle -PolicyType Initial
 ---
 
 <details open>
-<summary><b>LAB 2: Zero-Trust Conditional Access & Sign-In Risk Policies</b></summary>
+<summary><b>🛡️LAB 2: Zero-Trust Conditional Access & Sign-In Risk Policies</b></summary>
 
 ### 1. Scenario Context
 * Sales rep Jim Halpert travels out-of-state to Philadelphia to execute high-value contracts.
@@ -126,7 +126,7 @@ Start-ADSyncSyncCycle -PolicyType Initial
 ---
 
 <details>
-<summary><b>LAB 3: Privileged Identity Governance & Just-In-Time Lifecycle</b></summary>
+<summary><b>🔑LAB 3: Privileged Identity Governance & Just-In-Time Lifecycle</b></summary>
 
 ### 1. Scenario Context
 * Executive absence leaves a branch network leadership space wide open for exploitation.
