@@ -1,6 +1,6 @@
 # 📄Dunder Mifflin Enterprise Identity Suite
 
-This projects documents the architecture and validation procedures for a centralized identity environment built within a standalone Microsoft Entra ID tenant. The environment mirrors corporate branch-network fictional scenarios from the TV Show, "The Office".
+These projects document the architecture and validation procedures for a centralized identity environment built within a standalone Microsoft Entra ID tenant. The environment mirrors corporate branch-network fictional scenarios from the TV Show, "The Office".
 
 ---
 
