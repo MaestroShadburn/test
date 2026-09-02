@@ -11,7 +11,8 @@ To maintain strict structural continuity, each lab is systematically broken down
 
 ---
 
-## 🛠️ Infrastructure Labs
+## 🛠️ Infrastructure Labs *CLICK BELOW*
+
 
 <details>
 <summary><b>⚙️LAB 1: Hybrid Directory Architecture & Core Synchronization Lifecycle</b></summary>
