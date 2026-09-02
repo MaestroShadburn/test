@@ -1,6 +1,6 @@
 # 📄Dunder Mifflin Enterprise Identity Suite
 
-This repository documents the architecture and validation procedures for a centralized enterprise identity infrastructure built within a standalone Microsoft Entra ID tenant. The environment mirrors a distributed branch-network scenario for Dunder Mifflin Paper Company.
+This repository documents the architecture and validation procedures for a centralized enterprise identity infrastructure built within a standalone Microsoft Entra ID tenant. The environment mirrors a corporate branch-network fictional scenarios from the TV Show, "The Office".
 
 ---
 
