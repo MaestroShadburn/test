@@ -1,6 +1,13 @@
 # 📄Dunder Mifflin Enterprise Identity Suite
 
-These projects document the architecture and validation procedures for a centralized identity environment built within a standalone Microsoft Entra ID tenant. This environment mirrors corporate branch-network fictional scenarios from the TV Show, "The Office".
+These projects document the architecture and validation procedures for a centralized identity environment built within a standalone Microsoft Entra ID tenant. This environment mirrors corporate branch-network fictional scenarios from the TV Show, "The Office" across **three distinct infrastructure labs**. 
+
+To maintain strict structural continuity, each lab is systematically broken down into a standard four-part engineering lifecycle:
+1. **Scenario Context:** The business vulnerabilities and operational storylines driving the project.
+2. **Implementation Walkthrough:** The granular, step-by-step technical deployment procedures executed in the portal.
+3. **Engineering Challenge & Troubleshooting Logs:** Real-world roadblocks encountered during staging and the custom engineering fixes used to overcome them.
+4. **Verification Benchmarks:** Definitive log tracking data and simulation testing to verify infrastructure compliance.
+
 
 ---
 
@@ -10,7 +17,7 @@ These projects document the architecture and validation procedures for a central
 <summary><b>⚙️LAB 1: Hybrid Directory Architecture & Core Synchronization Lifecycle</b></summary>
 
 ### 1. Scenario Context
-* On-premises legacy domain metadata stores active profiles, organizational units, and branch policies.
+* On-premises legacy domain stores active profiles, organizational units, and branch policies.
 * User Creed Bratton arbitrarily modifies system credentials out-of-band, fracturing directory alignment.
 * Engineering Objective: Connect local identities securely to Microsoft Entra ID via automated sync engines.
 
@@ -21,7 +28,7 @@ These projects document the architecture and validation procedures for a central
 2. Initialize Active Directory Domain Services (AD DS) through Server Manager.
 3. Establish a new forest root domain designated as `dunmifflin.local`.
 4. Open Active Directory Domains and Trusts to append the `dunmifflin.org` UPN suffix.
-5. Launch Active Directory Users and Computers (ADUC) to build `OU=Scranton-Branch`.
+5. Launch Active Directory Users and Computers (ADUC) to build `OU=Dunder Mifflin`.
 6. Provision target employee accounts inside the new container.
 7. Map Creed Bratton's account to the routing identity `cbratton@dunmifflin.org`.
 
@@ -71,8 +78,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 <summary><b>🛡️LAB 2: Zero-Trust Conditional Access & Sign-In Risk Policies</b></summary>
 
 ### 1. Scenario Context
-* Sales rep Jim Halpert travels out-of-state to Philadelphia to execute high-value contracts.
-* Security risks elevate due to management paranoia regarding threat actors stealing sales leads.
+* Sales rep Jim Halpert travels out-of-state to Philadelphia to close a major paper deal.
+* Security risks elevate due to Dwight's paranoia regarding threat actors stealing sales leads.
 * Engineering Objective: Build an identity perimeter to intercept malicious connections from unverified networks.
 
 ### 2. Implementation Walkthrough
@@ -80,8 +87,8 @@ Start-ADSyncSyncCycle -PolicyType Initial
 #### Phase 1: Policy Scope Setup
 1. Launch the Entra portal panel using Security Administrator permissions.
 2. Open the left-side navigation blade and head to Protection ➔ Conditional Access.
-3. Click the Create New Policy link button to open the rule authoring workspace.
-4. Set the policy system name parameters to `DM-CA02: Sign-In Risk Enforcement Perimeter`.
+3. Click the Create New Policy link button to open the rule creation panel.
+4. Set the policy system name parameters to `Risky Sign-ins MFA`.
 5. Select Users ➔ check Select users and groups ➔ search and assign Jim Halpert's identity object.
 6. Open Target resources ➔ choose Cloud apps ➔ flip the application dropdown to All cloud apps.
 
@@ -91,10 +98,10 @@ Start-ADSyncSyncCycle -PolicyType Initial
 1. Click the Conditions sidebar window and select the Sign-in risk selection block.
 2. Flip the configuration option toggle switch state over from No to Yes.
 3. Check the specific risk level assessment checkboxes tracking High and Medium threat profiles.
-4. Scroll down the panel structure view to open the Access controls ➔ Grant menu block.
+4. Scroll down the panel structure view to open the Access controls ➔ Grant menu.
 5. Click Grant access to reveal enforcement rules and check **Require multi-factor authentication**.
 6. Switch the Enable policy toggle control location at the footer from Report-only to **On**.
-7. Select Create to compile the policy rules across global network data centers.
+7. Select "Create" to compile the policy rules across the global network data centers.
 
 > <img width="950" height="423" alt="image" src="https://github.com/user-attachments/assets/664b11be-82e1-4115-b4a5-4a295fe7caf6" />
 
@@ -106,9 +113,9 @@ Start-ADSyncSyncCycle -PolicyType Initial
 
 #### Active Exploitation Run
 1. Launch an isolated anonymous Tor window instance to act as the adversarial threat vector.
-2. Navigate to `://office.com` and type in Jim Halpert's corporate email credentials.
-3. Observe the cloud identity suite immediately evaluate the anonymous routing layer traffic.
-4. Verify the player screen freezes authentication and pops a mandatory MFA roadblock challenge.
+2. Navigate to `https://myapplications.microsoft.com` and type in Jim Halpert's email credentials.
+3. Observe the cloud identity suite immediately evaluate the anonymous network mask.
+4. Verify the screen freezes authentication and pops a mandatory MFA roadblock challenge.
 
 > <img width="557" height="373" alt="image" src="https://github.com/user-attachments/assets/b04eff28-aed2-4ecd-b2fa-18f49f42ca4e" />
 
@@ -129,27 +136,27 @@ Start-ADSyncSyncCycle -PolicyType Initial
 <summary><b>🔑LAB 3: Privileged Identity Governance & Just-In-Time Lifecycle</b></summary>
 
 ### 1. Scenario Context
-* Executive absence leaves a branch network leadership space wide open for exploitation.
-* User Dwight Schrute demands permanent root Global Administrator visibility to run the network layer.
+* The absence of manager Michael Scott leaves a branch network leadership space wide open for exploitation.
+* User Dwight Schrute demands permanent Global Administrator visibility to run the network layer.
 * High permissions introduce privilege vulnerabilities and insider-threat risk vectors.
 * Engineering Objective: Configure a lifecycle perimeter providing temporary, auditable privilege elevations.
 
 ### 2. Implementation Walkthrough
 
 #### Phase 1: Governance Structure Setup
-1. Log into the administrative console and track to Privileged Identity Management (PIM).
+1. Log into the administrative console and scroll to Privileged Identity Management (PIM).
 2. Expand the Manage menu layout items to open Azure AD roles ➔ Roles.
 3. Locate Global Administrator to review the existing system assignment list view.
 4. Click Add assignments to link a new identity token tracking policy.
 5. Select members ➔ search for Dwight Schrute's account ➔ link the target profile object.
-6. Swap Assignment type configurations from static Active parameters down to **Eligible**.
+6. Swap Assignment type configurations from "Active" parameters down to **Eligible**.
 
 > <img width="336" height="415" alt="image" src="https://github.com/user-attachments/assets/4a2a7c06-e330-4130-836b-6b90a5c0e0f7" />
 
 #### Phase 2: Role Lifecycle Hardening
 1. Click the Global Administrator settings gear icon link inside the PIM control space.
 2. Select Edit to modify baseline role assignment activation parameters.
-3. Pull the Maximum activation duration slider down to lock role elevation at **2 hours**.
+3. Pull the Maximum activation duration slider down to lock role elevation at **8 hours**.
 4. Check the activation criteria requirement box forcing Multi-Factor Authentication.
 5. Check the rule tracking option for **Require justification on activation**.
 6. Hit the Save button choice at the bottom edge to write changes across the infrastructure.
@@ -157,10 +164,10 @@ Start-ADSyncSyncCycle -PolicyType Initial
 > <img width="276" height="415" alt="image" src="https://github.com/user-attachments/assets/f845a057-2eea-4a0d-b1f4-0405c07fa941" />
 
 ### 3. Engineering Challenge & Troubleshooting Logs
-* **The Failure:** Executed a role escalation test simulation using Dwight's user account. The platform verified the justification entry text but failed to trigger the automated timeout cleanup script, leaving root privileges active permanently.
+* **The Failure:** Executed a role escalation test simulation using Dwight's user account. The platform verified the justification entry but failed to trigger the automated timecap script, leaving privileges active permanently.
 * **The Fix:** Conducted an administrative trace and discovered Dwight's profile was nested inside a legacy security group that inherited direct, permanent Global Admin permissions outside PIM visibility rules. Purged the account from that legacy security group container to clear the inheritance leak.
 
 ### 4. Verification Benchmarks
 1. Access the Privileged Identity Management console ➔ Azure AD roles ➔ Audit history.
 2. Review the timeline logs to track the chronological lifecycle events.
-3. Confirm the log records the entry text business case justification statement.
+3. Confirm the log records the entry and business case justification statement.
