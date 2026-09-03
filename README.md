@@ -1,4 +1,4 @@
-# $${\color{}\text{📄 Dunder Mifflin Cloud Identity Security Labs}}$$
+# $${\color{Blue}\text{📄 Dunder Mifflin Cloud Identity Security Labs}}$$
 
 Hello and Welcome to Dunder Mifflin! These projects document the architecture and validation procedures for a centralized identity environment built within a standalone Microsoft Entra ID tenant. This environment mirrors corporate branch-network fictional scenarios from the TV Show, "The Office" across **three distinct infrastructure labs**. 
 
@@ -11,7 +11,7 @@ To maintain strict structural continuity, each lab is systematically broken down
 
 ---
 
-## 🛠️ Infrastructure Labs  $${\color{LightBlue}\text{* CLICK BELOW *}}$$
+## 🛠️ Infrastructure Labs  $${\color{Blue}\text{* CLICK BELOW *}}$$
 
 
 <details>
