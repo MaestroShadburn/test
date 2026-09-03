@@ -11,7 +11,7 @@ To maintain strict structural continuity, each lab is systematically broken down
 
 ---
 
-## 🛠️ Infrastructure Labs    * CLICK BELOW * 
+## 🛠️ Infrastructure Labs      * CLICK BELOW * 
 
 
 <details>
