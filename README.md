@@ -11,7 +11,7 @@ To maintain strict structural continuity, each lab is systematically broken down
 
 ---
 
-## 🛠️ Infrastructure Labs  $${\color{BabyBlue}\text{* CLICK BELOW *}}$$
+## 🛠️ Infrastructure Labs  $${\color{Green}\text{* CLICK BELOW *}}$$
 
 
 <details>
