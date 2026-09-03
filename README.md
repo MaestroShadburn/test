@@ -1,4 +1,4 @@
-# 📄Dunder Mifflin Cloud Identity Security Labs
+# 📄 Dunder Mifflin Cloud Identity Security Labs
 
 These projects document the architecture and validation procedures for a centralized identity environment built within a standalone Microsoft Entra ID tenant. This environment mirrors corporate branch-network fictional scenarios from the TV Show, "The Office" across **three distinct infrastructure labs**. 
 
